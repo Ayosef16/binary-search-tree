@@ -11,51 +11,49 @@ const nodeFactory = () => {
 const treeFactory = (array) => {
   let root = buildTree(array);
 
-  // const insert = (value) => {
-  //   let currentNode = root;
-  //   let parentNode;
-  //   while (currentNode) {
-  //     parentNode = currentNode;
-  //     if (value < currentNode.data) {
-  //       currentNode = currentNode.left;
-  //     } else if (value > currentNode.data) {
-  //       currentNode = currentNode.right;
-  //     } else {
-  //       return;
-  //     }
-  //   }
-  //   // Create a new node
-  //   let node = nodeFactory();
-  //   node.data = value;
-  //   // Insert the node
-  //   if (node.data < parentNode.data) {
-  //     parentNode.left = node;
-  //   } else {
-  //     parentNode.right = node;
-  //   }
-  // };
-  const insertNode = (value) => {
-    root = insertRec(root, value);
-  };
-
-  const insertRec = (rootNode, value) => {
+  // Insert a node into the tree
+  const insertNode = (value, rootNode = root) => {
+    // Create a new node
     let node = nodeFactory();
     node.data = value;
+
+    // Base case, inserting the node
     if (rootNode === null) {
       rootNode = node;
       return rootNode;
     }
+
+    // Traverse through the tree and update it
     if (value < rootNode.data) {
-      rootNode.left = insertRec(rootNode.left, value);
+      rootNode.left = insertNode(value, rootNode.left);
     } else if (value > rootNode.data) {
-      rootNode.right = insertRec(rootNode.right, value);
+      rootNode.right = insertNode(value, rootNode.right);
     }
+
+    // Return tree with the new node
     return rootNode;
   };
 
-  const deleteNode = (value) => {};
+  const deleteNode = (value) => {
+    root = deleteRec(root, value);
+  };
 
-  return { root, insertNode, deleteNode };
+  // Return the node that contains the value, otherwise return null
+  const findNode = (value, rootNode = root) => {
+    // Base case
+    if (rootNode === null) return null;
+
+    // Check if the value is less, higher or equal to the data on the node
+    if (value < rootNode.data) {
+      return findNode(value, rootNode.left);
+    } else if (value > rootNode.data) {
+      return findNode(value, rootNode.right);
+    } else if (value === rootNode.data) {
+      return rootNode;
+    }
+  };
+
+  return { root, insertNode, deleteNode, findNode };
 };
 
 const buildTree = (array) => {
@@ -107,4 +105,6 @@ testTree.insertNode(69);
 testTree.insertNode(77);
 testTree.insertNode(66);
 testTree.insertNode(66);
-prettyPrint(testTree.root);
+// prettyPrint(testTree.root);
+prettyPrint(testTree.findNode(45));
+prettyPrint(testTree.findNode(11));
