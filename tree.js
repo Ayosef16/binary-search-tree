@@ -105,9 +105,100 @@ const treeFactory = (array) => {
     }
   };
 
-  return { root, insertNode, deleteNode, findNode };
+  // Create a function that uses breadth first traversal
+  const levelOrder = (callback, rootNode = root) => {
+    // Check that the root exist
+    if (rootNode === null) return;
+
+    // Initialize the queue array and the values where we are going to store the data
+    const queue = [];
+    const values = [];
+    queue.push(rootNode);
+
+    // Loop through the queue nodes and add their children if possible.
+    while (queue.length > 0) {
+      const firstNode = queue.shift();
+      values.push(firstNode.data);
+      if (firstNode.left) queue.push(firstNode.left);
+      if (firstNode.right) queue.push(firstNode.right);
+      if (callback) callback(firstNode);
+    }
+    if (!callback) return values;
+  };
+
+  // Create a function that uses depth first traversal, InOrder: Left - Root - Right.
+  const inOrder = (callback, rootNode = root, values = []) => {
+    if (rootNode === null) return;
+    inOrder(callback, rootNode.left, values);
+    values.push(rootNode.data);
+    if (callback) callback(rootNode);
+    inOrder(callback, rootNode.right, values);
+
+    if (!callback) return values;
+  };
+
+  // Create a function that uses depth first traversal, PreOrder: Root - Left - Right.
+  const preOrder = (callback, rootNode = root, values = []) => {
+    if (rootNode === null) return;
+    values.push(rootNode.data);
+    if (callback) callback(rootNode);
+    preOrder(callback, rootNode.left, values);
+    preOrder(callback, rootNode.right, values);
+
+    if (!callback) return values;
+  };
+
+  // Create a function that uses depth first traversal, PreOrder: Left - Right - Root.
+  const postOrder = (callback, rootNode = root, values = []) => {
+    if (rootNode === null) return;
+    postOrder(callback, rootNode.left, values);
+    postOrder(callback, rootNode.right, values);
+    values.push(rootNode.data);
+    if (callback) callback(rootNode);
+
+    if (!callback) return values;
+  };
+
+  // Create a function that return the height of a node => longest path towards a leaf node.
+  const height = (node = root) => {
+    if (node === null) return -1;
+    let leftHeight = height(node.left);
+    let rightHeight = height(node.right);
+    return Math.max(leftHeight, rightHeight) + 1;
+  };
+
+  // Create a function that return the depth of a node => path towards the root.
+  const depth = (node = root) => {
+    if (node === null) return 0;
+    return height(root) - height(node);
+  };
+
+  // Create a function that checks if the tree is balanced
+  const isBalanced = (rootNode = root) => {
+    if (rootNode === null) return true;
+    if (Math.abs(height(rootNode.left) - height(rootNode.right)) <= 1) {
+      return true;
+    }
+    if (isBalanced(rootNode.left && isBalanced(rootNode.right))) return true;
+
+    return false;
+  };
+
+  return {
+    root,
+    insertNode,
+    deleteNode,
+    findNode,
+    levelOrder,
+    inOrder,
+    preOrder,
+    postOrder,
+    height,
+    depth,
+  };
 };
 
+// Create a function to build a balanced binary tree and return it's root.
 const buildTree = (array) => {
   // Remove duplicates from the array
   const newArray = [...new Set(array)];
@@ -136,6 +227,7 @@ const buildTree = (array) => {
   return root;
 };
 
+// Print the tree to the console.
 const prettyPrint = (node, prefix = "", isLeft = true) => {
   if (node === null) {
     return;
@@ -161,7 +253,9 @@ prettyPrint(testTree.root);
 // testTree.deleteNode(1);
 // testTree.deleteNode(29);
 // testTree.deleteNode(50);
-testTree.deleteNode(81);
-prettyPrint(testTree.root);
+// testTree.deleteNode(81);
+// prettyPrint(testTree.root);
 // prettyPrint(testTree.findNode(45));
 // prettyPrint(testTree.findNode(11));
+console.log(testTree.depth(testTree.findNode(2)));
+console.log(testTree.height(testTree.findNode(50)));
