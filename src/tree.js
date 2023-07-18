@@ -8,7 +8,7 @@ const nodeFactory = () => {
   return { data, left, right };
 };
 
-const treeFactory = (array) => {
+export const treeFactory = (array) => {
   let root = buildTree(array);
 
   // Get root info
@@ -253,25 +253,3 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
   }
 };
-
-const testArray = [99, 11, 45, 29, 73, 1, 1, 99, 69, 1, 36, 50, 81, 100];
-
-let testTree = treeFactory(testArray);
-testTree.insertNode(2);
-testTree.insertNode(69);
-testTree.insertNode(77);
-testTree.insertNode(66);
-testTree.insertNode(66);
-prettyPrint(testTree.getRoot());
-// testTree.deleteNode(1);
-// testTree.deleteNode(29);
-// testTree.deleteNode(50);
-// testTree.deleteNode(81);
-// prettyPrint(testTree.root);
-// prettyPrint(testTree.findNode(45));
-// prettyPrint(testTree.findNode(11));
-console.log(testTree.isBalanced());
-testTree.rebalance();
-console.log(testTree.getRoot());
-prettyPrint(testTree.getRoot());
-console.log(testTree.isBalanced());
