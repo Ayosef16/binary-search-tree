@@ -11,14 +11,15 @@ const nodeFactory = () => {
 const treeFactory = (array) => {
   let root = buildTree(array);
 
+  // Get root info
+  const getRoot = () => root;
+
   // Insert a node into the tree
   const insertNode = (value, rootNode = root) => {
-    // Create a new node
-    let node = nodeFactory();
-    node.data = value;
-
     // Base case, inserting the node
     if (rootNode === null) {
+      let node = nodeFactory();
+      node.data = value;
       rootNode = node;
       return rootNode;
     }
@@ -176,16 +177,26 @@ const treeFactory = (array) => {
   // Create a function that checks if the tree is balanced
   const isBalanced = (rootNode = root) => {
     if (rootNode === null) return true;
-    if (Math.abs(height(rootNode.left) - height(rootNode.right)) <= 1) {
+    if (
+      Math.abs(height(rootNode.left) - height(rootNode.right)) <= 1 &&
+      isBalanced(rootNode.left) &&
+      isBalanced(rootNode.right)
+    ) {
       return true;
     }
-    if (isBalanced(rootNode.left && isBalanced(rootNode.right))) return true;
 
     return false;
   };
 
+  // Create a function that rebalance the tree
+  const rebalance = () => {
+    if (root === null) return;
+    const sortedArray = inOrder();
+    root = buildTree(sortedArray);
+  };
+
   return {
-    root,
+    getRoot,
     insertNode,
     deleteNode,
     findNode,
@@ -195,6 +206,8 @@ const treeFactory = (array) => {
     postOrder,
     height,
     depth,
+    isBalanced,
+    rebalance,
   };
 };
 
@@ -243,13 +256,13 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 
 const testArray = [99, 11, 45, 29, 73, 1, 1, 99, 69, 1, 36, 50, 81, 100];
 
-testTree = treeFactory(testArray);
+let testTree = treeFactory(testArray);
 testTree.insertNode(2);
 testTree.insertNode(69);
 testTree.insertNode(77);
 testTree.insertNode(66);
 testTree.insertNode(66);
-prettyPrint(testTree.root);
+prettyPrint(testTree.getRoot());
 // testTree.deleteNode(1);
 // testTree.deleteNode(29);
 // testTree.deleteNode(50);
@@ -257,5 +270,8 @@ prettyPrint(testTree.root);
 // prettyPrint(testTree.root);
 // prettyPrint(testTree.findNode(45));
 // prettyPrint(testTree.findNode(11));
-console.log(testTree.depth(testTree.findNode(2)));
-console.log(testTree.height(testTree.findNode(50)));
+console.log(testTree.isBalanced());
+testTree.rebalance();
+console.log(testTree.getRoot());
+prettyPrint(testTree.getRoot());
+console.log(testTree.isBalanced());
